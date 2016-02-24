@@ -11,16 +11,26 @@
     </div>
     <div id="table"></div>
     <script>
+      // number of slots to show
+      var totalSlots = 2;
+      
       // cq scripts
       var engagementScript, trafficScript;
       $(document).ready(function() {
         engagementScript = $.trim($('#engagement').html());
         trafficScript = $.trim($('#traffic').html());
+        
+        // loop through slots
+        for (var i = 1; i <= totalSlots; i++) {
+          addSlot(i);
+        }
+
       });
       // cq params
       var engagementParams = {};
       var trafficParams = {};
       
+      // add slot info to report
       function addSlot(num) {
         slot = $('<div id="slot' + num + '" class="slot">').appendTo('#all-slots');
         $('<div class="slot-num">' + num + '</div>').appendTo(slot);
@@ -75,11 +85,6 @@
       
       function getTrafficBreakdown(slot) {
         
-      }
-      
-      // loop through slots
-      for (var i = 0; i < 2; i++) {
-        addSlot(i);
       }
       
     </script>

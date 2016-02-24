@@ -13,6 +13,8 @@
     <script>
       // number of slots to show
       var totalSlots = 2;
+      // number of days to analyze predictions
+      var predictedDays = 30;
       
       // cq scripts
       var engagementScript, trafficScript;
@@ -47,7 +49,7 @@
         engagementParams[slot] = {
           1: {
             'slot': slot,
-            'from_date': date_to_string(moment().subtract(30, 'days')),
+            'from_date': date_to_string(moment().subtract(predictedDays, 'days')),
             'to_date': date_to_string(moment()),
           },
           2: {
@@ -80,12 +82,12 @@
           'Actual': {},
         }
         _.each(data[0], function(object) {
-          var time = Object.keys[object][0]
-          graphObject.Predicted[time] = object[time]
+          var time = Object.keys[object][0];
+          graphObject.Predicted[time] = object[time]/predictedDays;
         });
         _.each(data[1], function(object) {
-          var time = Object.keys[object][0]
-          graphObject.Actual[time] = object[time]
+          var time = Object.keys[object][0];
+          graphObject.Actual[time] = object[time];
         });
         // var graphObject = {
         //   'Predicted': data[0],

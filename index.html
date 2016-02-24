@@ -74,13 +74,17 @@
       }
       
       function displayEngagement(slot, results) {
-        console.log(slot);
         console.log(results);
         var graphObject = {
           'Predicted': results[0],
           'Actual': results[1]
         }
         console.log(graphObject);
+        var slotDiv = $('#slot' + slot);
+        $('<div class="graph engage-graph"></div>').appendTo(slotDiv).MPChart({
+          chartType: 'line',
+          data: graphObject
+        });
       }
       
       function getTrafficBreakdown(slot) {

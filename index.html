@@ -82,6 +82,8 @@
           'Actual': {},
         }
         _.each(data[0], function(object) {
+          console.log(object)
+          console.log(Object.keys[object])
           var time = Object.keys[object][0];
           graphObject.Predicted[time] = object[time]/predictedDays;
         });

@@ -76,7 +76,16 @@
       }
       
       function displayEngagement(slot, data) {
-        console.log(data);
+        var slotDiv = $('#slot' + slot);
+
+        // add engagement data to slot in report
+        var currentEngagement = data[1][4];
+        $('<div class="engage-label">Engagement Score:</div><div class="engage-score">' + currentEngagement + '</div>').appendTo(slotDiv);
+        
+        var vsPredicted = data[1][4] - data[0][4]/predictedDays;
+        $('<div class="vs-score" style="color: ' + colorFormat(vsPredicted) + ';">' + vsPredicted + '</div><div class="vs-label">vs. Predicted</div>').appendTo(slotDiv);
+        
+        // format graph data
         var graphObject = {
           'Predicted': {},
           'Actual': {},
@@ -89,12 +98,8 @@
           var time = Object.keys(object)[0];
           graphObject.Actual[time] = object[time];
         });
-        // var graphObject = {
-        //   'Predicted': data[0],
-        //   'Actual': data[1]
-        // }
-        console.log(graphObject);
-        var slotDiv = $('#slot' + slot);
+        
+        // add graph to slot in report
         $('<div class="graph engage-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
           data: graphObject
@@ -107,6 +112,10 @@
       
       function date_to_string(d) {
         return d.toISOString().split('T')[0];
+      }
+      
+      function colorFormat(n) {
+        return n > 0 ? 'green' : n < 0 ? 'red' : 'black';
       }
       
     </script>

@@ -76,8 +76,8 @@
       function displayEngagement(slot, results) {
         console.log(results);
         var graphObject = {
-          'Predicted': results[0],
-          'Actual': results[1]
+          'Predicted': results[0][0],
+          'Actual': results[1][0]
         }
         console.log(graphObject);
         var slotDiv = $('#slot' + slot);

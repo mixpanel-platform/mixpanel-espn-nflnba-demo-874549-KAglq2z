@@ -46,14 +46,14 @@
       function getEngagementScore(slot) {
         engagementParams[slot] = {
           1: {
-            'slot': slot,
-            'from_date': moment().subtract(30, 'days'),
-            'to_date': moment(),
+            "slot": slot,
+            "from_date": moment().subtract(30, 'days'),
+            "to_date": moment(),
           },
           2: {
-            'slot': slot,
-            'from_date': moment(),
-            'to_date': moment(),
+            "slot": slot,
+            "from_date": moment(),
+            "to_date": moment(),
           }
         }
         var promises = [];

@@ -46,14 +46,14 @@
       function getEngagementScore(slot) {
         engagementParams[slot] = {
           1: {
-            "slot": slot,
-            "from_date": moment().subtract(30, 'days'),
-            "to_date": moment(),
+            'slot': slot,
+            'from_date': date_to_string(moment().subtract(30, 'days')),
+            'to_date': date_to_string(moment()),
           },
           2: {
-            "slot": slot,
-            "from_date": moment(),
-            "to_date": moment(),
+            'slot': slot,
+            'from_date': date_to_string(moment()),
+            'to_date': date_to_string(moment()),
           }
         }
         var promises = [];
@@ -85,6 +85,10 @@
       
       function getTrafficBreakdown(slot) {
         
+      }
+      
+      function date_to_string(d) {
+        return d.toISOString().split('T')[0];
       }
       
     </script>

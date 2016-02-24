@@ -12,8 +12,11 @@
     <div id="table"></div>
     <script>
       // cq scripts
-      var engagementScript = $.trim($('#engagement').html());
-      var trafficScript = $.trim($('#traffic').html());
+      var engagementScript, trafficScript;
+      $(document).ready(function() {
+        engagementScript = $.trim($('#engagement').html());
+        trafficScript = $.trim($('#traffic').html());
+      });
       // cq params
       var engagementParams = {};
       var trafficParams = {};
@@ -23,7 +26,7 @@
         $('<div class="slot-num">' + num + '</div>').appendTo(slot);
         getCurrentStory(num);
         getEngagementScore(num);
-        getTrafficBreakdwon(num);
+        getTrafficBreakdown(num);
       }
       
       function getCurrentStory(slot) {

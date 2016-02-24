@@ -7,44 +7,121 @@
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
   </head>
   <body class="mixpanel-platform-body">
-    <div class="mixpanel-platform-section">
-      <div id="eventSelect" style="float: left;"></div>
-      <div id="by" class="mixpanel-platform-label" style="margin-left: 10px; display: none;">by</div>
-      <div id="propSelect" style="float: left;"></div>
-      <div id="dateSelect" style="float: right;"></div>
-      <div style="clear: both;"></div>
-      <div id="graph"></div>
+    <div class="mixpanel-platform-section" id="all-slots">
     </div>
     <div id="table"></div>
     <script>
-      var eventSelect = $('#eventSelect').MPEventSelect();
-      var propSelect  = $('#propSelect').MPPropertySelect();
-      var dateSelect  = $('#dateSelect').MPDatepicker();
-      var eventGraph  = $('#graph').MPChart({chartType: 'line'});
-      var eventTable  = $('#table').MPTable({
-        showPercentages: true,
-        firstColHeader: 'Event'
-      });
-
-      var runQuery = function() {
-        var eventName = eventSelect.MPEventSelect('value'),
-            propName  = propSelect.MPPropertySelect('value'),
-            dateRange = dateSelect.MPDatepicker('value');
-
-        if (eventName) {
-          MP.api.segment(eventName, propName, dateRange).done(function(results) {
-            eventGraph.MPChart('setData', results);
-            eventTable.MPTable('setData', results);
-          });
+      // cq scripts
+      var engagementScript = $.trim($('#engagement').html());
+      var trafficScript = $.trim($('#traffic').html());
+      // cq params
+      var engagementParams = {};
+      var trafficParams = {};
+      
+      function addSlot(num) {
+        slot = $('<div id="slot' + num + '" class="slot">').appendTo('#all-slots');
+        $('<div class="slot-num">' + num + '</div>').appendTo(slot);
+        getCurrentStory(num);
+        getEngagementScore(num);
+        getTrafficBreakdwon(num);
+      }
+      
+      function getCurrentStory(slot) {
+        
+      }
+      
+      function getEngagementScore(slot) {
+        params[slot] = {
+          1: {
+            'slot': slot,
+            'from_date': moment().subtract(30, 'days'),
+            'to_date': moment(),
+          },
+          2: {
+            'slot': slot,
+            'from_date': moment(),
+            'to_date': moment(),
+          }
         }
-      };
-      eventSelect.on('change', function(e, eventName) {
-        propSelect.MPPropertySelect('setEvent', eventName);
-        $("#by").show();
-        runQuery();
-      });
-      propSelect.on('change', runQuery);
-      dateSelect.on('change', runQuery);
+        var promises = [];
+        var predicted = new Promise(function(resolve, reject) {
+          MP.api.custom_query(engagementScript, params[slot][1]).done(function(results) {
+            resolve(results);
+          });
+        });
+        var now = new Promise(function(resolve, reject) {
+          MP.api.custom_query(engagementScript, params[slot][2]).done(function(results) {
+            resolve(results);
+          });
+        });
+        promises.push(predicted, now);
+        Promise.all(promises).then(function(data) {
+          displayEngagement(slot, data);
+        });
+      }
+      
+      function displayEngagement(slot, results) {
+        console.log(slot);
+        console.log(results);
+        var graphObject = {
+          'Predicted': data[0],
+          'Actual': data[1]
+        }
+        console.log(graphObject);
+      }
+      
+      function getTrafficBreakdown(slot) {
+        
+      }
+      
+      // loop through slots
+      for (var i = 0, i < 2, i++) {
+        addSlot(i);
+      }
+      
+    </script>
+    <script type="text/cq" id="engagement">
+      function main() {
+          var object = {};
+          var currentHour = new Date().getHours();
+          var events = {
+              'Video Started': 5,
+              'Story View': 3,
+              'Page View': 2,
+              'Social Share': 1,
+          }
+        // Take all events in the given date range.
+        return Events({
+          from_date: params.from_date,
+          to_date: params.to_date,
+        })
+        .filter(function(event) {
+            return Object.keys(events).indexOf(event.name) > -1 && event.properties.Slot == params.slot
+        })
+        .groupBy(
+              [
+                function(event) { return new Date(event.time).getHours(); }
+              ],
+              function(accumulators, items) {
+                  var sum = 0;
+                  _.each(items, function(event) {
+                      sum += events[event.name];
+                  });
+                  _.each(accumulators, function(accum) {
+                      sum += accum;
+                  })
+                  return sum;
+              }
+          )
+          .filter(function(item) { return currentHour-4 <= item.key && item.key <= currentHour })
+          .map(function(item) { 
+              var object = {}
+              var hour = item.key[0] % 12 || 12;
+              object[hour + ':00'] = item.value;
+              return object;
+          })
+          .reduce(mixpanel.reducer.object_merge())
+      }
     </script>
   </body>
 </html>

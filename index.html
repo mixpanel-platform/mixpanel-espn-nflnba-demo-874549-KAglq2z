@@ -73,12 +73,24 @@
         });
       }
       
-      function displayEngagement(slot, results) {
-        console.log(results);
+      function displayEngagement(slot, data) {
+        console.log(data);
         var graphObject = {
-          'Predicted': results[0][0],
-          'Actual': results[1][0]
+          'Predicted': {},
+          'Actual': {},
         }
+        _.each(data[0], function(object) {
+          var time = Object.keys[object][0]
+          graphObject.Predicted[time] = object[time]
+        });
+        _.each(data[1], function(object) {
+          var time = Object.keys[object][0]
+          graphObject.Actual[time] = object[time]
+        });
+        // var graphObject = {
+        //   'Predicted': data[0],
+        //   'Actual': data[1]
+        // }
         console.log(graphObject);
         var slotDiv = $('#slot' + slot);
         $('<div class="graph engage-graph"></div>').appendTo(slotDiv).MPChart({
@@ -135,8 +147,7 @@
               var hour = item.key[0] % 12 || 12;
               object[hour + ':00'] = item.value;
               return object;
-          })
-          .reduce(mixpanel.reducer.object_merge())
+          });
       }
     </script>
   </body>

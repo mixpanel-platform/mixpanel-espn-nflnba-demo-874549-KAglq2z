@@ -31,7 +31,7 @@
       }
       
       function getEngagementScore(slot) {
-        params[slot] = {
+        engagementParams[slot] = {
           1: {
             'slot': slot,
             'from_date': moment().subtract(30, 'days'),
@@ -45,12 +45,12 @@
         }
         var promises = [];
         var predicted = new Promise(function(resolve, reject) {
-          MP.api.custom_query(engagementScript, params[slot][1]).done(function(results) {
+          MP.api.custom_query(engagementScript, engagementParams[slot][1]).done(function(results) {
             resolve(results);
           });
         });
         var now = new Promise(function(resolve, reject) {
-          MP.api.custom_query(engagementScript, params[slot][2]).done(function(results) {
+          MP.api.custom_query(engagementScript, engagementParams[slot][2]).done(function(results) {
             resolve(results);
           });
         });

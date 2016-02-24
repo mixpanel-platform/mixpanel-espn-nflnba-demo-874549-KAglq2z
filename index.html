@@ -82,14 +82,11 @@
           'Actual': {},
         }
         _.each(data[0], function(object) {
-          console.log(object)
-          debugger;
-          console.log(Object.keys[object])
-          var time = Object.keys[object][0];
+          var time = Object.keys(object)[0];
           graphObject.Predicted[time] = object[time]/predictedDays;
         });
         _.each(data[1], function(object) {
-          var time = Object.keys[object][0];
+          var time = Object.keys(object)[0];
           graphObject.Actual[time] = object[time];
         });
         // var graphObject = {

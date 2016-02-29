@@ -189,7 +189,7 @@
     <script type="text/cq" id="vsall">
       function main() {
           var object = {};
-          var currentHour = new Date().getHours() - 5; // adjust UTC time to EST
+          var currentHour = new Date().getHours() - 5; // account for utc to est offset
           var events = {
               'Video Started': 5,
               'Story View': 3,
@@ -202,12 +202,12 @@
           to_date: params.to_date,
         })
         .filter(function(event) {
-            return Object.keys(events).indexOf(event.name) > -1;
+            return Object.keys(events).indexOf(event.name) > -1 && parseInt(event.properties.Slot) <= params.slot_max;
         })
         .groupBy(
               [
                   function(event) { return event.properties.Slot == params.slot },
-                  function(event) { return new Date(event.time).getHours() - 5; } // adjust UTC time to EST
+                  function(event) { return new Date(event.time).getHours(); - 5 }
               ],
               function(accumulators, items) {
                   var sum = 0;
@@ -220,13 +220,13 @@
                   return sum;
               }
           )
-          .filter(function(item) { return currentHour-4 <= item.key[1] && item.key[1] <= currentHour })
+          .filter(function(item) { return currentHour-5 <= item.key[1] && item.key[1] <= currentHour })
           .map(function(item) { 
               var object = {}
               var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';
               object[type] = {};
               var hour = item.key[1] % 12 || 12;
-              object[type][hour + ':00'] = item.value;
+              object[type][hour + ':00'] = item.key[0] ? item.value : item.value/(params.slot_max-1);
               return object;
           })
       }

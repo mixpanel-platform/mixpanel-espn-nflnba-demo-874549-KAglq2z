@@ -16,9 +16,10 @@
       var predictedDays = 30;
       
       // cq scripts
-      var engagementScript, trafficScript;
+      var engagementScript, vsallScript, trafficScript;
       $(document).ready(function() {
         engagementScript = $.trim($('#engagement').html());
+        vsallScript = $.trim($('#vsall').html());
         trafficScript = $.trim($('#traffic').html());
         
         // loop through slots
@@ -29,6 +30,7 @@
       });
       // cq params
       var engagementParams = {};
+      var vsallParams = {};
       var trafficParams = {};
       
       // add slot info to report
@@ -57,6 +59,11 @@
             'to_date': date_to_string(moment()),
           }
         }
+        vsallParams[slot] = {
+          'slot': slot,
+          'from_date': date_to_string(moment().subtract(1, 'days')),
+          'to_date': date_to_string(moment()),
+        }
         var promises = [];
         var predicted = new Promise(function(resolve, reject) {
           MP.api.custom_query(engagementScript, engagementParams[slot][1]).done(function(results) {
@@ -68,7 +75,12 @@
             resolve(results);
           });
         });
-        promises.push(predicted, now);
+        var vsall = new Promise(function(resolve, reject) {
+          MP.api.custom_query(vsallScript, vsallParams[slot]).done(function(results) {
+            resolve(results);
+          })
+        })
+        promises.push(predicted, now, vsall);
         Promise.all(promises).then(function(data) {
           displayEngagement(slot, data);
         });
@@ -104,6 +116,21 @@
           chartType: 'line',
           data: graphObject
         });
+        
+        // add engagement vs all other slots
+        var vsallGraphObject = {
+          'Slot ' + slot: {},
+          'All Others': {},
+        }
+        _.each(data[2], function(object) {
+          var type = Object.keys(object)[0]
+          $.extend(true, vsallGraphObject, object);
+        });
+        
+        $('<div class="graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
+          chartType: 'line',
+          data: vsallGraphObject
+        });
       }
       
       function getTrafficBreakdown(slot) {
@@ -135,11 +162,11 @@
           to_date: params.to_date,
         })
         .filter(function(event) {
-            return Object.keys(events).indexOf(event.name) > -1 && event.properties.Slot == params.slot
+            return Object.keys(events).indexOf(event.name) > -1 && event.properties.Slot == params.slot;
         })
         .groupBy(
               [
-                function(event) { return new Date(event.time).getHours(); }
+                function(event) { return new Date(event.time).getHours() - 5; } // adjust UTC time to EST
               ],
               function(accumulators, items) {
                   var sum = 0;
@@ -159,6 +186,51 @@
               object[hour + ':00'] = item.value;
               return object;
           });
+      }
+    </script>
+    <script type="text/cq" id="vsall">
+      function main() {
+          var object = {};
+          var currentHour = new Date().getHours() - 5; // adjust UTC time to EST
+          var events = {
+              'Video Started': 5,
+              'Story View': 3,
+              'Page View': 2,
+              'Social Share': 1,
+          }
+        // Take all events in the given date range.
+        return Events({
+          from_date: params.from_date,
+          to_date: params.to_date,
+        })
+        .filter(function(event) {
+            return Object.keys(events).indexOf(event.name) > -1;
+        })
+        .groupBy(
+              [
+                  function(event) { return event.properties.Slot == params.slot },
+                  function(event) { return new Date(event.time).getHours() - 5; } // adjust UTC time to EST
+              ],
+              function(accumulators, items) {
+                  var sum = 0;
+                  _.each(items, function(event) {
+                      sum += events[event.name];
+                  });
+                  _.each(accumulators, function(accum) {
+                      sum += accum;
+                  })
+                  return sum;
+              }
+          )
+          .filter(function(item) { return currentHour-4 <= item.key[1] && item.key[1] <= currentHour })
+          .map(function(item) { 
+              var object = {}
+              var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';
+              object[type] = {};
+              var hour = item.key[1] % 12 || 12;
+              object[type][hour + ':00'] = item.value;
+              return object;
+          })
       }
     </script>
   </body>

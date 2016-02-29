@@ -118,8 +118,9 @@
         });
         
         // add engagement vs all other slots
+        var slotText = 'Slot ' + slot;
         var vsallGraphObject = {
-          'Slot ' + slot: {},
+          slotText: {},
           'All Others': {},
         }
         _.each(data[2], function(object) {

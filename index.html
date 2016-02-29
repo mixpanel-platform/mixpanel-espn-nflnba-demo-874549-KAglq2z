@@ -61,6 +61,7 @@
         }
         vsallParams[slot] = {
           'slot': slot,
+          'slot_max': totalSlots,
           'from_date': date_to_string(moment().subtract(1, 'days')),
           'to_date': date_to_string(moment()),
         }
@@ -121,7 +122,6 @@
         var slotText = 'Slot ' + slot;
         var vsallGraphObject = {}
         _.each(data[2], function(object) {
-          var type = Object.keys(object)[0]
           $.extend(true, vsallGraphObject, object);
         });
         
@@ -220,7 +220,7 @@
                   return sum;
               }
           )
-          .filter(function(item) { return currentHour-5 <= item.key[1] && item.key[1] <= currentHour })
+          .filter(function(item) { return currentHour-4 <= item.key[1] && item.key[1] <= currentHour })
           .map(function(item) { 
               var object = {}
               var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';

@@ -125,6 +125,9 @@
           $.extend(true, vsallGraphObject, object);
         });
         
+        var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
+        $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in field</div>').appendTo(slotDiv);
+        
         $('<div class="graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
           data: vsallGraphObject

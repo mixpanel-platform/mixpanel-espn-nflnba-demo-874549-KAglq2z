@@ -7,8 +7,7 @@
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
   </head>
   <body class="mixpanel-platform-body">
-    <div class="mixpanel-platform-section" id="all-slots">
-    </div>
+    <div class="mixpanel-platform-section" id="all-slots"></div>
     <div id="table"></div>
     <script>
       // number of slots to show
@@ -123,7 +122,7 @@
     <script type="text/cq" id="engagement">
       function main() {
           var object = {};
-          var currentHour = new Date().getHours();
+          var currentHour = new Date().getHours() - 5; // adjust UTC time to EST
           var events = {
               'Video Started': 5,
               'Story View': 3,

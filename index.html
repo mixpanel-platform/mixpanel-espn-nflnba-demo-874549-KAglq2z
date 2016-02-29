@@ -119,10 +119,7 @@
         
         // add engagement vs all other slots
         var slotText = 'Slot ' + slot;
-        var vsallGraphObject = {
-          slotText: {},
-          'All Others': {},
-        }
+        var vsallGraphObject = {}
         _.each(data[2], function(object) {
           var type = Object.keys(object)[0]
           $.extend(true, vsallGraphObject, object);

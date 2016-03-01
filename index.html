@@ -184,7 +184,7 @@
                   return sum;
               }
           )
-          .filter(function(item) { return currentHour-4 <= item.key && item.key <= currentHour })
+          .filter(function(item) { return currentHour-5 <= item.key && item.key <= currentHour })
           .map(function(item) { 
               var object = {}
               var hour = item.key[0] % 12 || 12;

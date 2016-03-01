@@ -16,26 +16,28 @@
     
       // number of slots to show
       var totalSlots = 5;
-      // number of days to analyze predictions
-      var predictedDays = 30;
+      // number of days to analyze predictions 
+      // currently last 4 weeks
+      var predictedDays = 28;
       
       // cq scripts
-      var engagementScript, vsallScript, trafficScript;
+      var engagementScript, vsallScript, trafficScript, storyScript;
       $(document).ready(function() {
         engagementScript = $.trim($('#engagement').html());
         vsallScript = $.trim($('#vsall').html());
-        trafficScript = $.trim($('#traffic').html());
+        trafficScript = $.trim($('#referred-traffic').html());
+        storyScript = $.trim($('#current-story').html());
         
         // loop through slots
         for (var i = 1; i <= totalSlots; i++) {
           addSlot(i);
         }
-
       });
       // cq params
       var engagementParams = {};
       var vsallParams = {};
       var trafficParams = {};
+      var storyParams = {};
       
       // add slot info to report
       function addSlot(num) {
@@ -47,7 +49,25 @@
       }
       
       function getCurrentStory(slot) {
-        
+        storyParams[slot] = {
+          'slot': slot,
+          'from_date': date_to_string(moment().subtract(1, 'days')),
+          'to_date': date_to_string(moment()),
+        }
+        MP.api.custom_query(storyScript, storyParams[slot]).done(function(results) {
+          displayStory(slot, results);
+        });
+      }
+      
+      function displayStory(slot, results) {
+        var slotDiv = $('#slot' + slot);
+        $('<div class="story-info">' + 
+        '<div class="story-stat">Current Story: ' + results[0].current_story + '</div>' + 
+        '<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
+        '<div class="story-stat">Engagement: ' + results[0].stats['Story View'] + ' views, ' + 
+        results[0].stats['Video Started'] + ' video starts, ' + 
+        results[0].stats['Social Share'] + ' shares' + '</div>' + 
+        '</div>').appendTo(slotDiv);
       }
       
       function getEngagementScore(slot) {
@@ -341,6 +361,111 @@
               var hour = item.key[1] % 12 || 12;
               object[type][hour + ':00'] = item.key[0] ? item.value : item.value/(params.slot_max-1);
               return object;
+          });
+      }
+    </script>
+    <script type="text/cq" id="current-story">
+      function msToTime(duration) {
+          var milliseconds = parseInt((duration%1000)/100)
+              , seconds = parseInt((duration/1000)%60)
+              , minutes = parseInt((duration/(1000*60))%60)
+              , hours = parseInt((duration/(1000*60*60))%24);
+      
+          hours = (hours < 10) ? "0" + hours : hours;
+          minutes = (minutes < 10) ? "0" + minutes : minutes;
+          seconds = (seconds < 10) ? "0" + seconds : seconds;
+      
+          return hours + ":" + minutes + ":" + seconds; // switch to just minutes
+      }
+      function main() {
+          var events = ['Video Started', 'Story View', 'Page View', 'Social Share',]
+          // Take all events in the given date range.
+          return Events({
+            from_date: params.from_date,
+            to_date: params.to_date,
+          })
+          .filter(function(event) {
+              return events.indexOf(event.name) > -1 && parseInt(event.properties.Slot) == params.slot;
+          })
+          .reduce(function(previous_outputs, events) {
+              var ret = {
+                  stories: {
+                      last_story_end: 0, 
+                      current_story_start: 0, 
+                      current_story_end: 0, 
+                      current_story: ''
+                  },
+                  stats: {
+                      'Story View': 0, // will be page view
+                      'Video Started': 0,
+                      'Social Share': 0
+                  }
+              };
+      
+              for (var i = 0; i < previous_outputs.length; i++){
+                  ret.stats['Story View'] += previous_outputs[i].stats['Story View'];
+                  ret.stats['Video Started'] += previous_outputs[i].stats['Video Started'];
+                  ret.stats['Social Share'] += previous_outputs[i].stats['Social Share'];
+                  
+                  if (ret.stories.current_story == previous_outputs[i].stories.current_story) {
+                      if (ret.stories.current_story_start > previous_outputs[i].stories.current_story_start && ret.stories.last_story_end < previous_outputs[i].stories.current_story_start) {
+                          ret.stories.current_story_start = previous_outputs[i].stories.current_story_start
+                      }
+                      if (ret.stories.current_story_end < previous_outputs[i].stories.current_story_end) {
+                          ret.stories.current_story_end = previous_outputs[i].stories.current_story_end
+                      }
+                      if (ret.stories.last_story_end < previous_outputs[i].stories.last_story_end) {
+                          ret.stories.last_story_end = previous_outputs[i].stories.last_story_end
+                      }
+                  } else {
+                      if (ret.stories.current_story_end < previous_outputs[i].stories.current_story_end) {
+                          ret.stories.current_story = previous_outputs[i].stories.current_story;
+                          if (ret.stories.current_story_end > previous_outputs[i].stories.last_story_end) {
+                              ret.stories.last_story_end = ret.stories.current_story_end;
+                          }
+                          ret.stories.current_story_end = previous_outputs[i].stories.current_story_end;
+                          if (ret.stories.current_story_start < ret.stories.last_story_end) {
+                              ret.stories.current_story_start = ret.stories.last_story_end;
+                          }
+                      } else if (ret.stories.last_story_end < previous_outputs[i].stories.current_story_end) {
+                          ret.stories.last_story_end = previous_outputs[i].stories.current_story_end;
+                          if (ret.stories.current_story_start < previous_outputs[i].stories.current_story_end) {
+                              ret.stories.current_story_start = previous_outputs[i].stories.current_story_end;
+                          }
+                      }
+                  }
+              }
+              for (var k = 0; k < events.length; k++) {
+                  var event = events[k];
+                  if (
+                      event.name == 'Story View' && 
+                      event.properties["Story Headline"] == ret.stories.current_story && 
+                      event.time > ret.stories.current_story_end
+                  ) {
+                      ret.stats['Story View'] ++;
+      
+                      ret.stories.current_story_end = event.time;
+                  } else if (event.name == 'Story View') {
+                      ret.stats['Story View'] ++;
+                      
+                      ret.stories.last_story_end = ret.stories.current_story_end;
+                      ret.stories.current_story_start = event.time;
+                      ret.stories.current_story_end = event.time;
+                      ret.stories.current_story = event.properties["Story Headline"];
+                  } else {
+                      ret.stats[event.name] ++;
+                  }
+              }
+              return ret;
+          })
+          .map(function(item) {
+              var timeDiff = item.stories.current_story_end - item.stories.current_story_start;
+              var result = {
+                  current_story: item.stories.current_story,
+                  time_in_slot: msToTime(timeDiff),
+                  stats: item.stats,
+              }
+              return result;
           })
       }
     </script>

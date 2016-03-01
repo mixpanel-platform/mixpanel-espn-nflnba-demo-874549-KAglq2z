@@ -21,12 +21,13 @@
       var predictedDays = 28;
       
       // cq scripts
-      var engagementScript, vsallScript, trafficScript, storyScript;
+      var engagementScript, vsallScript, trafficScript, storyScript, timeScript;
       $(document).ready(function() {
         engagementScript = $.trim($('#engagement').html());
         vsallScript = $.trim($('#vsall').html());
         trafficScript = $.trim($('#referred-traffic').html());
         storyScript = $.trim($('#current-story').html());
+        timeScript = $.trim($('#story-time').html());
         
         // loop through slots
         for (var i = 1; i <= totalSlots; i++) {
@@ -38,6 +39,7 @@
       var vsallParams = {};
       var trafficParams = {};
       var storyParams = {};
+      var timeParams = {};
       
       // add slot info to report
       function addSlot(num) {
@@ -55,15 +57,23 @@
           'to_date': date_to_string(moment()),
         }
         MP.api.custom_query(storyScript, storyParams[slot]).done(function(results) {
-          displayStory(slot, results);
+          timeParams[slot] = {
+            'story': results[0].current_story,
+            'from_date': date_to_string(moment().subtract(1, 'days')),
+            'to_date': date_to_string(moment()),
+          }
+          MP.api.custom_query(timeScript, timeParams[slot]).done(function(timeResults) {
+            displayStory(slot, results, timeResults);
+          });
         });
       }
       
-      function displayStory(slot, results) {
+      function displayStory(slot, results, timeResults) {
         var slotDiv = $('#slot' + slot);
         $('<div class="story-info">' + 
         '<div class="story-stat">Current Story: ' + results[0].current_story + '</div>' + 
         '<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
+        '<div class="story-stat">Time since Publish: ' + timeResults[0] + '</div>' + 
         '<div class="story-stat">Engagement: ' + results[0].stats['Story View'] + ' views, ' + 
         results[0].stats['Video Started'] + ' video starts, ' + 
         results[0].stats['Social Share'] + ' shares' + '</div>' + 
@@ -467,6 +477,53 @@
               }
               return result;
           })
+      }
+    </script>
+    <script type="text/cq" id="story-time">
+      var params = {
+          "from_date": "2016-02-22",
+          "to_date": "2016-02-22",
+          "story": "Westbrook explodes on three monster slams",
+      };
+      function msToTime(duration) {
+          var milliseconds = parseInt((duration%1000)/100)
+              , seconds = parseInt((duration/1000)%60)
+              , minutes = parseInt((duration/(1000*60))%60)
+              , hours = parseInt((duration/(1000*60*60))%24);
+      
+          hours = (hours < 10) ? "0" + hours : hours;
+          minutes = (minutes < 10) ? "0" + minutes : minutes;
+          seconds = (seconds < 10) ? "0" + seconds : seconds;
+      
+          return hours + ":" + minutes + ":" + seconds; // switch to just minutes
+      }
+      function main() {
+          // Take all events in the given date range.
+          return Events({
+            from_date: params.from_date,
+            to_date: params.to_date,
+          })
+          .filter(function(event) {
+              return event.name == 'Story View' && event.properties['Story Headline'] == params.story;
+          })
+          .reduce(function(previous_outputs, events) {
+              var result = 100000000000000000;
+              _.each(previous_outputs, function(output) {
+                  if (output < result) {
+                      result = output;
+                  }
+              });
+              _.each(events, function(e) {
+                  if (e.time < result) {
+                      result = e.time;
+                  }
+              });
+              return result;
+          })
+          .map(function(result) {
+              var now = Date.now();
+              return msToTime(now - result);
+          });
       }
     </script>
   </body>

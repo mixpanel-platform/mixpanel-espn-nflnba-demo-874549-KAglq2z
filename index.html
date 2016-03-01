@@ -10,6 +10,9 @@
     <div class="mixpanel-platform-section" id="all-slots"></div>
     <div id="table"></div>
     <script>
+    //////////////////////////// things to fix
+    // there could be a -4:00 because we're subtracting by 5 - do a better timezone offset
+    
       // number of slots to show
       var totalSlots = 5;
       // number of days to analyze predictions
@@ -79,8 +82,8 @@
         var vsall = new Promise(function(resolve, reject) {
           MP.api.custom_query(vsallScript, vsallParams[slot]).done(function(results) {
             resolve(results);
-          })
-        })
+          });
+        });
         promises.push(predicted, now, vsall);
         Promise.all(promises).then(function(data) {
           displayEngagement(slot, data);
@@ -126,7 +129,7 @@
         });
         
         var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
-        $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in field</div>').appendTo(slotDiv);
+        $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
         
         $('<div class="graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
@@ -209,8 +212,8 @@
         })
         .groupBy(
               [
-                  function(event) { return event.properties.Slot == params.slot },
-                  function(event) { return new Date(event.time).getHours(); - 5 }
+                  function(event) { return event.properties.Slot == params.slot; },
+                  function(event) { return new Date(event.time).getHours() - 5; }
               ],
               function(accumulators, items) {
                   var sum = 0;

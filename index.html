@@ -157,7 +157,7 @@
         
         // add engagement vs all other slots
         var slotText = 'Slot ' + slot;
-        var vsallGraphObject = {}
+        var vsallGraphObject = {};
         _.each(data[2], function(object) {
           $.extend(true, vsallGraphObject, object);
         });
@@ -184,10 +184,14 @@
       
       function displayTraffic(slot, data) {
         var slotDiv = $('#slot' + slot);
+        var trafficObject = {};
+        _.each(data[0], function(object) {
+          $.extend(trafficObject, object);
+        });
         $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'bar',
           stacked: true,
-          data: data[0]
+          data: trafficObject
         });
       }
       

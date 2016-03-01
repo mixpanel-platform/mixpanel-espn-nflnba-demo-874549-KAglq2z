@@ -186,7 +186,7 @@
         var slotDiv = $('#slot' + slot);
         var trafficObject = {};
         _.each(data, function(object) {
-          $.extend(trafficObject, object);
+          $.extend(true, trafficObject, object);
         });
         console.log(trafficObject)
         $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({

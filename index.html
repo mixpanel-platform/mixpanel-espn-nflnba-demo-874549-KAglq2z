@@ -396,9 +396,10 @@
             .filter(function(item) { return currentHour-4 <= item.key[0] && item.key[0] <= currentHour; })
             .map(function(item) { 
                 var object = {};
-                var type = ''; ///// a thing
-                var hour = item.key[1] % 12 || 12;
-                object[type][hour + ':00'] = item.key[0] ? item.value : item.value/(params.slot_max-1);
+                var type = item.key[1];
+                object[type] = {};
+                var hour = item.key[0] % 12 || 12;
+                object[type][hour + ':00'] = item.value;
                 return object;
             });
         }

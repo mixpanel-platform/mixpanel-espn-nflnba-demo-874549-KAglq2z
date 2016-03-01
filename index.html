@@ -185,7 +185,7 @@
         console.log(data)
         var slotDiv = $('#slot' + slot);
         var trafficObject = {};
-        _.each(data[0], function(object) {
+        _.each(data, function(object) {
           $.extend(trafficObject, object);
         });
         console.log(trafficObject)

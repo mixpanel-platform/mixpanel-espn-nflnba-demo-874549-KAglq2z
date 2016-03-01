@@ -13,6 +13,7 @@
     //////////////////////////// things to fix
     // there could be a -4:00 because we're subtracting by 5 - do a better timezone offset
     // also -3 - 5 will not return -8 (which doesn't exist as an hour)
+    // how to get only today?
     
       // number of slots to show
       var totalSlots = 5;
@@ -480,11 +481,6 @@
       }
     </script>
     <script type="text/cq" id="story-time">
-      var params = {
-          "from_date": "2016-02-22",
-          "to_date": "2016-02-22",
-          "story": "Westbrook explodes on three monster slams",
-      };
       function msToTime(duration) {
           var milliseconds = parseInt((duration%1000)/100)
               , seconds = parseInt((duration/1000)%60)

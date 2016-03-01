@@ -12,6 +12,7 @@
     <script>
     //////////////////////////// things to fix
     // there could be a -4:00 because we're subtracting by 5 - do a better timezone offset
+    // also -3 - 5 will not return -8 (which doesn't exist as an hour)
     
       // number of slots to show
       var totalSlots = 5;
@@ -91,7 +92,6 @@
       }
       
       function displayEngagement(slot, data) {
-        console.log(data)
         var slotDiv = $('#slot' + slot);
 
         // add engagement data to slot in report
@@ -140,7 +140,19 @@
       }
       
       function getTrafficBreakdown(slot) {
-        
+        trafficParams[slot] = {
+          'slot': slot,
+          'from_date': date_to_string(moment().subtract(1, 'days')),
+          'to_date': date_to_string(moment()),
+        }
+        MP.api.custom_query(trafficScript, trafficParams[slot]).done(function(results) {
+          displayTraffic(slot, results);
+        });
+      }
+      
+      function displayTraffic(slot, data) {
+        var slotDiv = $('#slot' + slot);
+        // add graph
       }
       
       function date_to_string(d) {
@@ -233,6 +245,99 @@
               var object = {}
               var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';
               object[type] = {};
+              var hour = item.key[1] % 12 || 12;
+              object[type][hour + ':00'] = item.key[0] ? item.value : item.value/(params.slot_max-1);
+              return object;
+          })
+      }
+    </script>
+    <script type="text/cq" id="basic-traffic">
+      var sources = {
+          'Social': ['facebook', 'twitter', 'linkedin', 'pinterest',],
+          'Search': ['google', 'bing', 'yahoo',],
+          'Direct': ['direct'],
+          'Internal': ['espn']
+      }
+      function readSources(domain) {
+          var types = Object.keys(sources);
+          for (var i = 0, j = types.length; i < j; i++) {
+              for (var k = 0, l = sources[types[i]].length; k < l; k++) {
+                  if (domain.indexOf(sources[types[i]][k]) > -1) {
+                      return types[i];
+                  }
+              }
+          }
+          return 'Other';
+      }
+      function getTrafficSource(event) {
+          var url = event.properties.$initial_referrer; // use referring domain
+          var split = url.split('/'); // delete
+          if (split.length >= 3) { // delete
+              url = split[2] // delete
+          } else { // del
+              return 'Direct'; // del
+          } // del
+          if (!url) { return 'Direct'; }
+          var domainList = url.split('.');
+          if (domainList.length <= 1) { return readSources(url); }
+          var domain = domainList.slice(0, domainList.length-1).join('.');
+          return readSources(domain);
+      }
+      
+      function main() {
+          // Take all events in the given date range.
+          return Events({
+              from_date: params.from_date,
+              to_date: params.to_date,
+          })
+          .filter(function(event) { return event.name == 'Story View' && event.properties.Slot == params.slot; }) // use page view event
+          .groupBy(
+              [getTrafficSource],
+              mixpanel.reducer.count()
+          )
+      }
+    </script>
+    <script type="text/cq" id="referred-traffic">
+      function getTrafficSource(event) {
+          var url = event.properties.$initial_referrer;
+          var split = url.split('/');
+          if (split.length >= 3) {
+              url = split[2]
+          } else {
+              return 'Other';
+          }
+          if (!url) { return 'Other'; }
+          var espn = 'baidu'; // change to espn
+          if (url.indexOf(espn) > -1)  {
+              return 'Other';
+          }
+          return 'Referred';
+      }
+      function getStoryPlacement(event) {
+          var placement = event.properties["Event Placement"];
+          if (placement == 'Main Feed') { return 'Feed'; }
+          return 'All Other';
+      }
+      
+      function main() {
+          var currentHour = new Date().getHours() - 5; // account for utc to est offset
+          // Take all events in the given date range.
+          return Events({
+              from_date: params.from_date,
+              to_date: params.to_date,
+          })
+          .filter(function(event) { return event.name == 'Story View' && event.properties.Slot == params.slot; }) // use page view
+          .groupBy(
+              [
+                  function(event) { return new Date(event.time).getHours() - 5; },
+                  getStoryPlacement,
+                  getTrafficSource
+              ],
+              mixpanel.reducer.count()
+          )
+          .filter(function(item) { return currentHour-2 <= item.key[0] && item.key[0] <= currentHour })
+          .map(function(item) { 
+              var object = {}
               var hour = item.key[1] % 12 || 12;
               object[type][hour + ':00'] = item.key[0] ? item.value : item.value/(params.slot_max-1);
               return object;

@@ -207,7 +207,7 @@
         
         function main() {
             var object = {};
-            var currentHour = convertTime(new Date().getHours(), timezone);
+            var currentHour = convertTime(new Date().getHours(), timezone); // convert utc to est timezone
             var events = {
                 'Video Started': 5,
                 'Story View': 3,
@@ -224,7 +224,7 @@
             })
             .groupBy(
                 [
-                    function(event) { return convertTime(new Date(event.time).getHours(), timezone); }
+                    function(event) { return new Date(event.time).getHours(); }
                 ],
                 function(accumulators, items) {
                     var sum = 0;
@@ -237,7 +237,7 @@
                     return sum;
                 }
             )
-            .filter(function(item) { return currentHour-4 <= item.key && item.key <= currentHour; })
+            .filter(function(item) { return currentHour-8 <= item.key && item.key <= currentHour; })
             .map(function(item) { 
                 var object = {}
                 var hour = item.key[0] % 12 || 12;
@@ -258,7 +258,7 @@
         
         function main() {
             var object = {};
-            var currentHour = convertTime(new Date().getHours(), timezone);
+            var currentHour = convertTime(new Date().getHours(), timezone); // convert utc to est timezone
             var events = {
                 'Video Started': 5,
                 'Story View': 3,
@@ -276,7 +276,7 @@
             .groupBy(
                 [
                     function(event) { return event.properties.Slot == params.slot; },
-                    function(event) { return convertTime(new Date(event.time).getHours(), timezone); }
+                    function(event) { return new Date(event.time).getHours(); }
                 ],
                 function(accumulators, items) {
                     var sum = 0;
@@ -289,7 +289,7 @@
                     return sum;
                 }
             )
-            .filter(function(item) { return currentHour-4 <= item.key[1] && item.key[1] <= currentHour; })
+            .filter(function(item) { return currentHour-8 <= item.key[1] && item.key[1] <= currentHour; })
             .map(function(item) { 
                 var object = {};
                 var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';
@@ -387,13 +387,13 @@
             .filter(function(event) { return event.name == 'Story View' && event.properties.Slot == params.slot; }) // use page view
             .groupBy(
                 [
-                    function(event) { return convertTime(new Date(event.time).getHours(), timezone); },
+                    function(event) { return new Date(event.time).getHours(); },
                     getStoryPlacement,
                     getTrafficSource
                 ],
                 mixpanel.reducer.count()
             )
-            .filter(function(item) { return currentHour-4 <= item.key[0] && item.key[0] <= currentHour; })
+            .filter(function(item) { return currentHour-8 <= item.key[0] && item.key[0] <= currentHour; })
             .map(function(item) { 
                 var object = {};
                 var type = item.key[1];

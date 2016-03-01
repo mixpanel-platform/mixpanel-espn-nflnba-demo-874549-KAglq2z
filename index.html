@@ -123,7 +123,6 @@
       }
       
       function displayEngagement(slot, data) {
-        console.log(data)
         var slotDiv = $('#slot' + slot);
 
         // add engagement data to slot in report
@@ -183,11 +182,13 @@
       }
       
       function displayTraffic(slot, data) {
+        console.log(data)
         var slotDiv = $('#slot' + slot);
         var trafficObject = {};
         _.each(data[0], function(object) {
           $.extend(trafficObject, object);
         });
+        console.log(trafficObject)
         $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'bar',
           stacked: true,

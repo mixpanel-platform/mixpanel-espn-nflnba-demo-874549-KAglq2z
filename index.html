@@ -391,7 +391,7 @@
                     getStoryPlacement,
                     getTrafficSource
                 ],
-                mixpanel.reducer.count();
+                mixpanel.reducer.count()
             )
             .filter(function(item) { return currentHour-4 <= item.key[0] && item.key[0] <= currentHour; })
             .map(function(item) { 

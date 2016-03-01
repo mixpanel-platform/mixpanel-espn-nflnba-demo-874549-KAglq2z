@@ -185,7 +185,8 @@
       function displayTraffic(slot, data) {
         var slotDiv = $('#slot' + slot);
         $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
-          chartType: 'line',
+          chartType: 'bar',
+          stacked: true,
           data: data[0]
         });
       }

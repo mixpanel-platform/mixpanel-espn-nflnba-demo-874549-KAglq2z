@@ -127,7 +127,7 @@
         var slotDiv = $('#slot' + slot);
 
         // add engagement data to slot in report
-        var length = data[0].length-1;
+        var length = data[1].length-1;
         var currentHour = Object.keys(data[0][length])[0];
         var currentEngagement = data[1][length][currentHour];
         $('<div class="engage-label">Engagement Score:</div><div class="engage-score">' + currentEngagement + '</div>').appendTo(slotDiv);

@@ -184,7 +184,10 @@
       
       function displayTraffic(slot, data) {
         var slotDiv = $('#slot' + slot);
-        // add graph
+        $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
+          chartType: 'line',
+          data: data[0]
+        });
       }
       
       function date_to_string(d) {

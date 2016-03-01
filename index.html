@@ -95,11 +95,12 @@
         var slotDiv = $('#slot' + slot);
 
         // add engagement data to slot in report
-        var currentHour = Object.keys(data[0][data[0][0].length-1])[0];
-        var currentEngagement = data[1][data[0][0].length-1][currentHour];
+        var length = data[0].length-1;
+        var currentHour = Object.keys(data[0][length])[0];
+        var currentEngagement = data[1][length][currentHour];
         $('<div class="engage-label">Engagement Score:</div><div class="engage-score">' + currentEngagement + '</div>').appendTo(slotDiv);
         
-        var vsPredicted = data[1][data[0][0].length-1][currentHour] - data[0][data[0][0].length-1][currentHour]/predictedDays;
+        var vsPredicted = data[1][length][currentHour] - data[0][length][currentHour]/predictedDays;
         $('<div class="vs-score" style="color: ' + colorFormat(vsPredicted) + ';">' + vsPredicted + '</div><div class="vs-label">vs. Predicted</div>').appendTo(slotDiv);
         
         // format graph data

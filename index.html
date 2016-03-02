@@ -290,7 +290,7 @@
         });
 
         // add graph to slot in report
-        addEngageChart(slot, 'engage-graph', vsPredicted, 'VS. PREDICTED', graphObject);
+        addEngageChart('line', slot, 'engage-graph', vsPredicted, 'VS. PREDICTED', graphObject);
 
         // add engagement vs all other slots
         var slotText = 'Slot ' + slot;
@@ -303,7 +303,7 @@
         // $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
         
         // add engagement vs all other slots graph
-        addEngageChart(slot, 'vsall-graph', vsallData, 'VS. ALL OTHER SLOTS', vsallGraphObject);
+        addEngageChart('line', slot, 'vsall-graph', vsallData, 'VS. OTHER SLOTS', vsallGraphObject);
       }
       
       function getTrafficBreakdown(slot) {
@@ -318,23 +318,22 @@
       }
       
       function displayTraffic(slot, data) {
-        console.log(data)
         var slotDiv = $('#slot' + slot);
         var trafficObject = {};
         _.each(data, function(object) {
           $.extend(true, trafficObject, object);
         });
-        console.log(trafficObject)
-        $('<div class="mp-bar-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
-          chartType: 'bar',
-          stacked: true,
-          data: trafficObject,
-          highchartsOptions: {
-            legend: {
-              enabled: false
-            }
-          }
-        });
+        addEngageChart('bar', slot, 'traffic-graph', '', 'FEED TRAFFIC VS. OTHER', trafficObject)
+        // $('<div class="mp-bar-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
+        //   chartType: 'bar',
+        //   stacked: true,
+        //   data: trafficObject,
+        //   highchartsOptions: {
+        //     legend: {
+        //       enabled: false
+        //     }
+        //   }
+        // });
       }
       
       function date_to_string(d) {
@@ -373,14 +372,23 @@
             }
         }
         
+        var params;
+        if (type == 'line') {
+          params = {
+            chartType: 'line',
+            highchartsOptions: highcharts,
+            data: data
+          }
+        } else if (type == 'bar') {
+          chartType: 'bar',
+          stacked: true,
+          highChartsOptions: highcharts,
+          data: data
+        }
+        
         var $graphDiv = $('<div class="graph-container"></div>').appendTo($parentGraphDiv);
         $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
-        $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
-          chartType: type,
-          stacked: true,
-          highchartsOptions: highcharts,
-          data: data
-        });
+        $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart(params);
         $('.' + div + ' .mixpanel-platform-chart_header').hide();
       }
 

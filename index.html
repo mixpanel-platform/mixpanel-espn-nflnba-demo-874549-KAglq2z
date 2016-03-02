@@ -174,7 +174,12 @@
         // add graph to slot in report
         $('<div class="mp-graph engage-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
-          data: graphObject
+          data: graphObject,
+          highchartsOptions: {
+            tooltip: {
+              enabled: false
+            }
+          }
         });
         
         // add engagement vs all other slots
@@ -189,7 +194,12 @@
         
         $('<div class="mp-graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
-          data: vsallGraphObject
+          data: vsallGraphObject,
+          highchartsOptions: {
+            tooltip: {
+              enabled: false
+            }
+          }
         });
       }
       
@@ -215,7 +225,12 @@
         $('<div class="mp-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'bar',
           stacked: true,
-          data: trafficObject
+          data: trafficObject,
+          highchartsOptions: {
+            tooltip: {
+              enabled: false
+            }
+          }
         });
       }
       

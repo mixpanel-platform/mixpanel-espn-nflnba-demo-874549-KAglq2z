@@ -194,7 +194,7 @@
         }
         
         var $graphDiv = $('<div class="graph-container"></div>').appendTo(slotDiv);
-        $('<div class="chart-header"></div><div class="chart-title-shadow"></div><div class="chart-title-container"></div><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div>').appendTo($graphDiv);
+        $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
         $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
           chartType: 'line',
           highchartsOptions: highcharts,

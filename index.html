@@ -145,6 +145,39 @@
         });
       }
       
+      function addChart(slot, div, data) {
+        var slotDiv = $('#slot' + slot);
+        var highcharts = {
+            chart: {
+                marginBottom: 30
+            },
+            xAxis: {
+                labels: {
+                    style: {
+                      font-weight: 'bold'
+                    }
+                }
+            },
+            yAxis: {
+                gridLineColor: '#E6E8EB',
+                gridLineDashStyle: 'Dash',
+                gridLineWidth: 1,
+                labels: {
+                    style: {
+                      font-weight: 'bold'
+                    }
+                }
+            }
+        }
+    
+        $('<div class="mp-graph ' + div + '"></div>').appendTo(slotDiv).MPChart({
+          chartType: 'line',
+          highchartsOptions: highcharts,
+          data: data
+        });
+        $('.' + div + ' .mixpanel-platform-chart_header').hide();
+      }
+      
       function displayEngagement(slot, data) {
         var slotDiv = $('#slot' + slot);
 
@@ -170,17 +203,18 @@
           var time = Object.keys(object)[0];
           graphObject.Actual[time] = object[time];
         });
-        
+
         // add graph to slot in report
-        $('<div class="mp-graph engage-graph"></div>').appendTo(slotDiv).MPChart({
-          chartType: 'line',
-          data: graphObject,
-          highchartsOptions: {
-            legend: {
-              enabled: false
-            }
-          }
-        });
+        addChart(slot, 'engage-graph', graphObject);
+        // $('<div class="mp-graph engage-graph"></div>').appendTo(slotDiv).MPChart({
+        //   chartType: 'line',
+        //   data: graphObject,
+        //   highchartsOptions: {
+        //     legend: {
+        //       enabled: false
+        //     }
+        //   }
+        // });
         
         // add engagement vs all other slots
         var slotText = 'Slot ' + slot;
@@ -192,15 +226,18 @@
         var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
         $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
         
-        $('<div class="mp-graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
-          chartType: 'line',
-          data: vsallGraphObject,
-          highchartsOptions: {
-            legend: {
-              enabled: false
-            }
-          }
-        });
+        // add engagement vs all other slots graph
+        addChart(slot, 'vsall-graph', vsallGraphObject);
+
+        // $('<div class="mp-graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
+        //   chartType: 'line',
+        //   data: vsallGraphObject,
+        //   highchartsOptions: {
+        //     legend: {
+        //       enabled: false
+        //     }
+        //   }
+        // });
       }
       
       function getTrafficBreakdown(slot) {

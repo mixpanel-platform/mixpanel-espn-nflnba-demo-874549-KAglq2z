@@ -133,12 +133,17 @@
   <body class="mixpanel-platform-body">
     <div class="mixpanel-platform-section" id="all-slots"></div>
     <script>
-    //////////////////////////// things to fix
-    // how to get only today?
+    //////////////////////////// things to do/fix
+    // how to get only today? (only relevant hours)
+    // how to refresh every so often
+    // second page & high level metrics at top
+    // legends for graphs
+    // format numbers
+    // commas in numbers for engagement metrics
     
       // number of slots to show
       var totalSlots = 5;
-      // number of days to analyze predictions 
+      // number of days to analyze engagement predictions
       // currently last 4 weeks
       var predictedDays = 28;
       
@@ -166,7 +171,7 @@
       // add slot info to report
       function addSlot(num) {
         var $slot = $('<div id="slot' + num + '" class="slot">' + 
-        '<div class="slot-num">' + num + '</div>' +
+        '<div class="slot-num">Slot ' + num + '</div>' +
         '<div class="story-title"></div><div class="story-stats"></div>' + 
         '<div class="engagement">' + 
         '<div class="engage-stats"><div class="engage-label">Engagement Score:</div>' + 

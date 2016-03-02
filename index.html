@@ -70,10 +70,9 @@
       }
       .divider {
         width: 1px;
-        height: 400px;
+        height: 365px;
         background-color: #868ea3;
         display: inline-block;
-        vertical-align: top;
         margin: 0 20px;
       }
       .engagement {
@@ -83,9 +82,11 @@
         margin: 35px 0;
         width: 585px;
       }
+      .engage-top {
+        margin: 20px 0;
+      }
       .engage-label {
         font-size: 20px;
-        margin: 70px 0;
         font-weight: bold;
         display: inline-block;
         width: 50%;
@@ -97,11 +98,13 @@
         padding: 25px 0;
       }
       .engage-score {
-        font-size: 50px;
+        display: inline-block;
+        width: 50%;
+        font-size: 40px;
         font-weight: bold;
       }
       .engage-metrics {
-        font-size: 20px;
+        font-size: 18px;
         margin-top: 5px;
       }
       .graph {
@@ -224,8 +227,8 @@
         '<div class="slot-num">' + num + '</div>' +
         '<div class="story"><div class="story-title"></div><div class="story-stats"></div></div>' + 
         '<div class="engagement">' + 
-        '<div class="engage-label">Engagement Score:</div>' +
-        '<div class="engage-stats"><div class="engage-score"></div><div class="engage-metrics"></div></div>' + 
+        '<div class="engage-top"><div class="engage-label">Engagement:</div><div class="engage-score"></div></div>' +
+        '<div class="engage-stats"><div class="engage-metrics"></div></div>' + 
         '<div class="engage-reports"></div>' + 
         '</div>' + // engagement
         '<div class="divider"></div>' +

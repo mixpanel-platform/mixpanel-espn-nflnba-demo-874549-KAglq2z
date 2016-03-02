@@ -425,6 +425,7 @@
         $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
         $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart(params);
         $('.' + div + ' .mixpanel-platform-chart_header').hide();
+        $('.' + div + ' svg > rect:nth-of-type(3)').setAttribute('height', '173');
       }
 
       

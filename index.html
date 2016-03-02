@@ -183,41 +183,6 @@
         });
       }
       
-      function addChart(slot, div, number, title, data) {
-        var slotDiv = $('#slot' + slot);
-        var highcharts = {
-            chart: {
-                marginBottom: 30
-            },
-            xAxis: {
-                labels: {
-                    style: {
-                      'font-weight': 'bold'
-                    }
-                }
-            },
-            yAxis: {
-                gridLineColor: '#E6E8EB',
-                gridLineDashStyle: 'Dash',
-                gridLineWidth: 1,
-                labels: {
-                    style: {
-                      'font-weight': 'bold'
-                    }
-                }
-            }
-        }
-        
-        var $graphDiv = $('<div class="graph-container"></div>').appendTo(slotDiv);
-        $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
-        $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
-          chartType: 'line',
-          highchartsOptions: highcharts,
-          data: data
-        });
-        $('.' + div + ' .mixpanel-platform-chart_header').hide();
-      }
-      
       function displayEngagement(slot, data) {
         var slotDiv = $('#slot' + slot);
 
@@ -318,6 +283,44 @@
       function colorFormat(n) {
         return n > 0 ? 'green' : n < 0 ? 'red' : 'black';
       }
+      
+      function addChart(slot, div, number, title, data) {
+        var slotDiv = $('#slot' + slot);
+        var highcharts = {
+            chart: {
+                marginBottom: 30,
+                borderWidth: 0,
+                borderRadius: 0
+            },
+            xAxis: {
+                labels: {
+                    style: {
+                      'font-weight': 'bold'
+                    }
+                }
+            },
+            yAxis: {
+                gridLineColor: '#E6E8EB',
+                gridLineDashStyle: 'Dash',
+                gridLineWidth: 1,
+                labels: {
+                    style: {
+                      'font-weight': 'bold'
+                    }
+                }
+            }
+        }
+        
+        var $graphDiv = $('<div class="graph-container"></div>').appendTo(slotDiv);
+        $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
+        $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
+          chartType: 'line',
+          highchartsOptions: highcharts,
+          data: data
+        });
+        $('.' + div + ' .mixpanel-platform-chart_header').hide();
+      }
+
       
     </script>
     <script type="text/cq" id="engagement">

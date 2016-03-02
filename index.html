@@ -13,12 +13,15 @@
       .mixpanel-platform-section {
         background-color: white;
       }
+      hr {
+        margin: 40px 0;
+      }
       .slot {
         margin: 20px 0;
       }
       .slot-num {
         color: black;
-        font-size: 120px;
+        font-size: 80px;
         text-align: left;
         display: inline-block;
         vertical-align: top;
@@ -183,6 +186,7 @@
       
       // add slot info to report
       function addSlot(num) {
+        $('<hr>').appendTo('#all-slots');
         var $slot = $('<div id="slot' + num + '" class="slot">' + 
         '<div class="slot-num">' + num + '</div>' +
         '<div class="story"><div class="story-title"></div><div class="story-stats"></div></div>' + 
@@ -348,7 +352,7 @@
       }
       
       function colorFormat(n) {
-        return n > 0 ? 'green' : n < 0 ? 'red' : 'black';
+        return n > 0 ? '#22ca76' : n < 0 ? '#ca2222' : 'black';
       }
       
       function addEngageChart(type, slot, div, number, title, data) {

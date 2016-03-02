@@ -207,9 +207,11 @@
       
       // add slot info to report
       function addSlot(num) {
+        $('<hr>').appendTo('#all-slots');
         // add slot div with structure
         $('<div id="slot' + num + '" class="slot">' + 
-        '<div class="new-slot"><div class="slot-num">' + num + '</div><div class="slot-divider"></div></div>' +
+        // '<div class="new-slot"><div class="slot-num">' + num + '</div><div class="slot-divider"></div></div>' +
+        '<div class="slot-num">' + num + '</div>' +
         '<div class="story"><div class="story-title"></div><div class="story-stats"></div></div>' + 
         '<div class="traffic-report"></div>' +
         '<hr><div class="engagement">' + 

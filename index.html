@@ -380,10 +380,12 @@
             data: data
           }
         } else if (type == 'bar') {
-          chartType: 'bar',
-          stacked: true,
-          highChartsOptions: highcharts,
-          data: data
+          params = {
+            chartType: 'bar',
+            stacked: true,
+            highChartsOptions: highcharts,
+            data: data
+          }
         }
         
         var $graphDiv = $('<div class="graph-container"></div>').appendTo($parentGraphDiv);

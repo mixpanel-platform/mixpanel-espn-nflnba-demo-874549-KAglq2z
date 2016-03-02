@@ -69,17 +69,20 @@
         font-weight: bold;
       }
       /*// Remove inner line chart border*/
-      .mp-graph > path
+      .mp-graph > path {
         display: none
+      }
       
       /*// Remove outer line chart border*/
-      .mp-graph > rect:nth-of-type(2)
-        stroke: $axisColor
+      .mp-graph > rect:nth-child(2) {
+        stroke: #FBFCFD;
+      }
       
       /*// Set border radius for line chart y-axis to 0*/
-      .mp-graph svg > rect:nth-of-type(3)
-        rx: 0
-        ry: 0
+      .mp-graph svg > rect:nth-child(3) {
+        rx: 0;
+        ry: 0;
+      }
 
     </style>
   </head>

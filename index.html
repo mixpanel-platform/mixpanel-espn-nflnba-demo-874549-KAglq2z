@@ -356,6 +356,11 @@
         var $parentGraphDiv = type == 'line' ? slotDiv.find('.engage-reports') : slotDiv.find('.traffic-report');
         var highcharts = {
             colors: ['#2276ca', '#ca2222'],
+            plotOptions: {
+              column: {
+                colors: ['#2276ca', '#ca2222']
+              }
+            },
             chart: {
                 marginBottom: 30,
                 borderWidth: 0,

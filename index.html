@@ -48,9 +48,6 @@
       .chart-header {
         background-color: rgb(223, 226, 236);
         position: relative;
-        /*border-radius: 2px 2px 0 0;*/
-        /*-webkit-border-radius: 2px 2px 0 0;*/
-        /*-moz-border-radius: 2px 2px 0 0;*/
       }
       .chart-title-shadow {
         background-color: transparent;
@@ -60,7 +57,7 @@
         width: 100%;
         height: 1px;
         z-index: 3;
-        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.2);
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);
       }
       .chart-title-container {
         text-align: center;
@@ -127,8 +124,15 @@
       
       // add slot info to report
       function addSlot(num) {
-        slot = $('<div id="slot' + num + '" class="slot">').appendTo('#all-slots');
-        $('<div class="slot-num">' + num + '</div>').appendTo(slot);
+        var $slot = $('<div id="slot' + num + '" class="slot">' + 
+        '<div class="story-title"></div><div class="story-stats"></div>' + 
+        '<div class="engagement">' + 
+        '<div class="engage-stats"><div class="engage-label">Engagement Score:</div>' + 
+        '<div class="engage-score"></div><div class="engage-metrics"></div></div>' + 
+        '<div class="engage-reports"></div>' + 
+        '</div>')
+        .appendTo('#all-slots');
+        $('<div class="slot-num">' + num + '</div>').appendTo($slot);
         getCurrentStory(num);
         getEngagementScore(num);
         getTrafficBreakdown(num);
@@ -154,14 +158,15 @@
       
       function displayStory(slot, results, timeResults) {
         var slotDiv = $('#slot' + slot);
-        $('<div class="story-info">' + 
-        '<div class="story-stat">Current Story: ' + results[0].current_story + '</div>' + 
-        '<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
-        '<div class="story-stat">Time since Publish: ' + timeResults[0] + '</div>' + 
-        '<div class="story-stat">Engagement: ' + results[0].stats['Story View'] + ' views, ' + 
-        results[0].stats['Video Started'] + ' video starts, ' + 
-        results[0].stats['Social Share'] + ' shares' + '</div>' + 
-        '</div>').appendTo(slotDiv);
+        var $storyDiv = slotDiv.find('.story-stats');
+        var $engageStatDiv = slotDiv.find('.engage-metrics');
+        slotDiv.find('.story-title').text(results[0].current_story);
+
+        $('<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
+        '<div class="story-stat">Time since Publish: ' + timeResults[0] + '</div>').appendTo($storyDiv);
+        $('<div class="engage-metric">' + results[0].stats['Story View'] + ' views</div>' + 
+        '<div class="engage-metric">' + results[0].stats['Video Started'] + ' video starts</div>' + 
+        '<div class="engage-metric">' + results[0].stats['Social Share'] + ' shares</div>').appendTo($engageStatDiv);
       }
       
       function getEngagementScore(slot) {
@@ -207,16 +212,16 @@
       
       function displayEngagement(slot, data) {
         var slotDiv = $('#slot' + slot);
+        var $engageScoreDiv = slotDiv.find('.engage-score');
 
         // add engagement data to slot in report
         var length = data[1].length-1;
         var currentHour = Object.keys(data[0][length])[0];
         var currentEngagement = data[1][length][currentHour];
-        $('<div class="engage-label">Engagement Score:</div><div class="engage-score">' + currentEngagement + '</div>').appendTo(slotDiv);
+        $engageScoreDiv.text(currentEngagement);
         
         var vsPredicted = data[1][length][currentHour] - data[0][length][currentHour]/predictedDays;
-        $('<div class="vs-score" style="color: ' + colorFormat(vsPredicted) + ';">' + vsPredicted + '</div><div class="vs-label">vs. Predicted</div>').appendTo(slotDiv);
-        
+
         // format graph data
         var graphObject = {
           'Predicted': {},
@@ -232,17 +237,8 @@
         });
 
         // add graph to slot in report
-        addChart(slot, 'engage-graph', vsPredicted, 'VS. PREDICTED', graphObject);
-        // $('<div class="mp-graph engage-graph"></div>').appendTo(slotDiv).MPChart({
-        //   chartType: 'line',
-        //   data: graphObject,
-        //   highchartsOptions: {
-        //     legend: {
-        //       enabled: false
-        //     }
-        //   }
-        // });
-        
+        addEngageChart(slot, 'engage-graph', vsPredicted, 'VS. PREDICTED', graphObject);
+
         // add engagement vs all other slots
         var slotText = 'Slot ' + slot;
         var vsallGraphObject = {};
@@ -251,20 +247,10 @@
         });
         
         var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
-        $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
+        // $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
         
         // add engagement vs all other slots graph
-        addChart(slot, 'vsall-graph', vsallData, 'VS. ALL OTHER SLOTS', vsallGraphObject);
-
-        // $('<div class="mp-graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
-        //   chartType: 'line',
-        //   data: vsallGraphObject,
-        //   highchartsOptions: {
-        //     legend: {
-        //       enabled: false
-        //     }
-        //   }
-        // });
+        addEngageChart(slot, 'vsall-graph', vsallData, 'VS. ALL OTHER SLOTS', vsallGraphObject);
       }
       
       function getTrafficBreakdown(slot) {
@@ -286,7 +272,7 @@
           $.extend(true, trafficObject, object);
         });
         console.log(trafficObject)
-        $('<div class="mp-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
+        $('<div class="mp-bar-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'bar',
           stacked: true,
           data: trafficObject,
@@ -306,8 +292,9 @@
         return n > 0 ? 'green' : n < 0 ? 'red' : 'black';
       }
       
-      function addChart(slot, div, number, title, data) {
+      function addEngageChart(slot, div, number, title, data) {
         var slotDiv = $('#slot' + slot);
+        var $engageGraphDiv = slotDiv.find('.engage-reports')
         var highcharts = {
             chart: {
                 marginBottom: 30,
@@ -333,7 +320,7 @@
             }
         }
         
-        var $graphDiv = $('<div class="graph-container"></div>').appendTo(slotDiv);
+        var $graphDiv = $('<div class="graph-container"></div>').appendTo($engageGraphDiv);
         $('<div class="chart-header"><div class="chart-title-shadow"></div><div class="chart-title-container"><div class="chart-title"><span style="color: ' + colorFormat(number) + '">' + number + '</span> ' + title + '</div></div></div>').appendTo($graphDiv);
         $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
           chartType: 'line',

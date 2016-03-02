@@ -16,6 +16,8 @@
       }
       .slot-num {
         font-size: 50px;
+        text-align: left;
+        display: inline-block;
       }
       .story-title {
         font-size: 25px;
@@ -32,7 +34,7 @@
       }
       .engagement {
         position: relative;
-        margin: 20px 0;
+        margin: 35px 0;
       }
       .engage-stats {
         display: inline-block;
@@ -163,6 +165,7 @@
       // add slot info to report
       function addSlot(num) {
         var $slot = $('<div id="slot' + num + '" class="slot">' + 
+        '<div class="slot-num">' + num + '</div>' +
         '<div class="story-title"></div><div class="story-stats"></div>' + 
         '<div class="engagement">' + 
         '<div class="engage-stats"><div class="engage-label">Engagement Score:</div>' + 
@@ -170,7 +173,6 @@
         '<div class="engage-reports"></div>' + 
         '</div>')
         .appendTo('#all-slots');
-        $('<div class="slot-num">' + num + '</div>').appendTo($slot);
         getCurrentStory(num);
         getEngagementScore(num);
         getTrafficBreakdown(num);

@@ -193,8 +193,10 @@
             }
         }
         
-        var title = colorFormat(number) + ' ' + title;
-        $('<div class="chart-header"></div><div class="chart-title-shadow"></div><div class="chart-title-container"></div><div class="chart-title">' + title + '</div><div class="mp-graph ' + div + '"></div>').appendTo(slotDiv).MPChart({
+        var graphTitle = colorFormat(number) + ' ' + title;
+        var $graphDiv = $('<div class="graph-container"></div>').appendTo(slotDiv);
+        $('<div class="chart-header"></div><div class="chart-title-shadow"></div><div class="chart-title-container"></div><div class="chart-title">' + graphTitle + '</div>').appendTo($graphDiv);
+        $('<div class="mp-graph ' + div + '"></div>').appendTo($graphDiv).MPChart({
           chartType: 'line',
           highchartsOptions: highcharts,
           data: data

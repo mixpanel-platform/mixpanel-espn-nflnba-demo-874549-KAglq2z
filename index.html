@@ -177,7 +177,7 @@
       // add slot info to report
       function addSlot(num) {
         var $slot = $('<div id="slot' + num + '" class="slot">' + 
-        '<div class="slot-num">Slot ' + num + '</div>' +
+        '<div class="slot-num">' + num + '</div>' +
         '<div class="story"><div class="story-title"></div><div class="story-stats"></div></div>' + 
         '<div class="traffic-report"></div>' +
         '<div class="engagement">' + 
@@ -213,7 +213,7 @@
         var slotDiv = $('#slot' + slot);
         var $storyDiv = slotDiv.find('.story-stats');
         var $engageStatDiv = slotDiv.find('.engage-metrics');
-        slotDiv.find('.slot-num').text('Slot ' + slot + ': ' + results[0].current_story);
+        slotDiv.find('.story-title').text(results[0].current_story);
 
         $('<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
         '<div class="story-stat">Time since Publish: ' + timeResults[0] + '</div>').appendTo($storyDiv);

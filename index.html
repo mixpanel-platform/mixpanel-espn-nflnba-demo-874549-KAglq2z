@@ -35,6 +35,7 @@
       .mp-graph {
         height: 200px;
         width: 300px;
+        background-color: rgb(251, 252, 253);
       }
       .mp-graph .graph {
         height: 200px;
@@ -69,13 +70,14 @@
         font-weight: bold;
       }
       /*// Remove inner line chart border*/
-      .mp-graph > path {
+      .mp-graph > path, .mp-graph svg > path {
         display: none
       }
       
       /*// Remove outer line chart border*/
       .mp-graph > rect:nth-child(2) {
-        stroke: #FBFCFD;
+        /*stroke: #FBFCFD;*/
+        stroke-width: 0;
       }
       
       /*// Set border radius for line chart y-axis to 0*/

@@ -22,11 +22,11 @@
       .engage-label {
         font-size: 15px;
       }
-      .graph {
+      .mp-graph {
         height: 200px;
         width: 300px;
       }
-      .graph .graph {
+      .mp-graph .graph {
         height: 200px;
         width: 300px;
       }
@@ -172,7 +172,7 @@
         });
         
         // add graph to slot in report
-        $('<div class="graph engage-graph"></div>').appendTo(slotDiv).MPChart({
+        $('<div class="mp-graph engage-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
           data: graphObject
         });
@@ -187,7 +187,7 @@
         var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
         $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
         
-        $('<div class="graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
+        $('<div class="mp-graph vsall-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'line',
           data: vsallGraphObject
         });
@@ -212,7 +212,7 @@
           $.extend(true, trafficObject, object);
         });
         console.log(trafficObject)
-        $('<div class="graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
+        $('<div class="mp-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
           chartType: 'bar',
           stacked: true,
           data: trafficObject

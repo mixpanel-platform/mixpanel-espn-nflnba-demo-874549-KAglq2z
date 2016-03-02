@@ -257,7 +257,7 @@
             })
             .groupBy(
                 [
-                    function(event) { return new Date(event.time).getHours(); }
+                    function(event) { return new Date(event.time).getHours() -5; }
                 ],
                 function(accumulators, items) {
                     var sum = 0;
@@ -309,7 +309,7 @@
             .groupBy(
                 [
                     function(event) { return event.properties.Slot == params.slot; },
-                    function(event) { return new Date(event.time).getHours(); }
+                    function(event) { return new Date(event.time).getHours() -5; }
                 ],
                 function(accumulators, items) {
                     var sum = 0;
@@ -420,7 +420,7 @@
             .filter(function(event) { return event.name == 'Story View' && event.properties.Slot == params.slot; }) // use page view
             .groupBy(
                 [
-                    function(event) { return new Date(event.time).getHours(); },
+                    function(event) { return new Date(event.time).getHours() -5; },
                     getStoryPlacement,
                     getTrafficSource
                 ],

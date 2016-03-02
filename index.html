@@ -65,9 +65,12 @@
       .story-stat {
         margin: 10px 0;
       }
-      .traffic-report {
+      .right-column {
         display: inline-block;
       }
+      /*.traffic-report {*/
+      /*  display: inline-block;*/
+      /*}*/
       .divider {
         width: 1px;
         height: 350px;
@@ -229,14 +232,14 @@
         $('<div id="slot' + num + '" class="slot">' + 
         // '<div class="new-slot"><div class="slot-num">' + num + '</div><div class="slot-divider"></div></div>' +
         '<div class="slot-num">' + num + '</div>' +
-        '<div class="story"><div class="story-title"></div><div class="story-stats"></div></div>' + 
+        '<div class="story"><div class="story-title"></div></div>' + 
         '<div class="engagement">' + 
         '<div class="engage-top"><div class="engage-label">Engagement:</div><div class="engage-score"></div></div>' +
         '<div class="engage-stats"><div class="engage-metrics"></div></div>' + 
         '<div class="engage-reports"></div>' + 
         '</div>' + // engagement
         '<div class="divider"></div>' +
-        '<div class="traffic-report"></div>' +
+        '<div class="right-column"><div class="story-stats"></div><div class="traffic-report"></div></div>' +
         '</div>')
         .appendTo('#all-slots');
         getCurrentStory(num);

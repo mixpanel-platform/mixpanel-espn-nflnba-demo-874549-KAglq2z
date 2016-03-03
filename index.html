@@ -59,6 +59,7 @@
         margin: 10px 0;
       }
       .story-stats {
+        text-align: center;
         font-size: 17px;
         margin: 40px 0;
       }
@@ -68,12 +69,9 @@
       .right-column {
         display: inline-block;
       }
-      /*.traffic-report {*/
-      /*  display: inline-block;*/
-      /*}*/
       .divider {
         width: 1px;
-        height: 350px;
+        height: 325px;
         background-color: #868ea3;
         display: inline-block;
         margin: 0 20px;
@@ -163,7 +161,7 @@
       }
       .chart-title {
         color: #747d94;
-        font-size: 1em;
+        font-size: 13px;
         font-weight: bold;
       }
       /*// Remove inner line chart border*/
@@ -329,7 +327,7 @@
         var currentEngagement = data[1][length][currentHour];
         $engageScoreDiv.text(currentEngagement);
         
-        var vsPredicted = data[1][length][currentHour] - data[0][length][currentHour]/predictedDays;
+        var vsPredicted = numberFormat(data[1][length][currentHour] - data[0][length][currentHour]/predictedDays);
 
         // format graph data
         var graphObject = {
@@ -338,7 +336,7 @@
         }
         _.each(data[0], function(object) {
           var time = Object.keys(object)[0];
-          graphObject.Predicted[time] = object[time]/predictedDays;
+          graphObject.Predicted[time] = numberFormat(object[time]/predictedDays);
         });
         _.each(data[1], function(object) {
           var time = Object.keys(object)[0];
@@ -355,9 +353,8 @@
           $.extend(true, vsallGraphObject, object);
         });
         
-        var vsallData = vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour];
-        // $('<div class="vs-score" style="color: ' + colorFormat(vsallData) + ';">' + vsallData + '</div><div class="vs-label">vs. other slots in feed</div>').appendTo(slotDiv);
-        
+        var vsallData = numberFormat(vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour]);
+
         // add engagement vs all other slots graph
         addEngageChart('line', slot, 'vsall-graph', vsallData, 'VS. OTHER SLOTS', vsallGraphObject);
       }
@@ -380,16 +377,6 @@
           $.extend(true, trafficObject, object);
         });
         addEngageChart('bar', slot, 'traffic-graph', '', 'FEED TRAFFIC VS. OTHER', trafficObject)
-        // $('<div class="mp-bar-graph traffic-graph"></div>').appendTo(slotDiv).MPChart({
-        //   chartType: 'bar',
-        //   stacked: true,
-        //   data: trafficObject,
-        //   highchartsOptions: {
-        //     legend: {
-        //       enabled: false
-        //     }
-        //   }
-        // });
       }
       
       function date_to_string(d) {
@@ -398,6 +385,13 @@
       
       function colorFormat(n) {
         return n > 0 ? '#22ca76' : n < 0 ? '#ca2222' : 'black';
+      }
+      
+      function numberFormat(n) {
+        n = Math.round(n);
+        var parts = x.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
       }
       
       function addEngageChart(type, slot, div, number, title, data) {

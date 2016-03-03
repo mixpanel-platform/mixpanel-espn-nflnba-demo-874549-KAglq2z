@@ -276,9 +276,9 @@
 
         $('<div class="story-stat">Time in Slot: <span class="dark-gray">' + results[0].time_in_slot + '</span></div>' + 
         '<div class="story-stat">Time since Publish: <span class="dark-gray">' + timeResults[0] + '</span></div>').appendTo($storyDiv);
-        $('<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Story View'] + '</span> views</div>' + 
-        '<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Video Started'] + '</span> video starts</div>' + 
-        '<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Social Share'] + '</span> shares</div>').appendTo($engageStatDiv);
+        $('<div class="engage-metric"><span class="dark-gray">' + numberFormatCommas(results[0].stats['Story View']) + '</span> views</div>' + 
+        '<div class="engage-metric"><span class="dark-gray">' + numberFormatCommas(results[0].stats['Video Started']) + '</span> video starts</div>' + 
+        '<div class="engage-metric"><span class="dark-gray">' + numberFormatCommas(results[0].stats['Social Share']) + '</span> shares</div>').appendTo($engageStatDiv);
       }
       
       function getEngagementScore(slot) {
@@ -330,7 +330,7 @@
         var length = data[1].length-1;
         var currentHour = Object.keys(data[0][length])[0];
         var currentEngagement = data[1][length][currentHour];
-        $engageScoreDiv.text('Engagement: '+ currentEngagement);
+        $engageScoreDiv.text('Engagement: '+ numberFormatCommas(currentEngagement));
         
         var vsPredicted = numberFormatRound(data[1][length][currentHour] - data[0][length][currentHour]/predictedDays);
 

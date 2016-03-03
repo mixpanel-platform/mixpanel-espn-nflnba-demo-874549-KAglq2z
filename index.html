@@ -22,12 +22,15 @@
         border: none;
         background-color: #868ea3;
       }
+      .dark-gray {
+        color: #6a738c;
+      }
       .slot {
         margin: 20px 0;
       }
       .slot-num {
         color: black;
-        font-size: 80px;
+        font-size: 50px;
         text-align: left;
         display: inline-block;
         vertical-align: top;
@@ -47,7 +50,7 @@
       .story {
         /*margin-left: 30px;*/
         display: inline-block;
-        width: 597px;
+        width: 800px;
         text-align: center;
         vertical-align: top;
       }
@@ -87,7 +90,7 @@
         margin: 20px 0;
       }
       .engage-label {
-        font-size: 25px;
+        font-size: 30px;
         font-weight: bold;
         display: inline-block;
         vertical-align: text-bottom;
@@ -232,7 +235,7 @@
         '<div class="slot-num">' + num + '</div>' +
         '<div class="story"><div class="story-title"></div></div>' + 
         '<div class="engagement">' + 
-        '<div class="engage-top"><div class="engage-label">Engagement:</div><div class="engage-score"></div></div>' +
+        '<div class="engage-top"><div class="engage-label">Engagement:</div></div>' +
         '<div class="engage-stats"><div class="engage-metrics"></div></div>' + 
         '<div class="engage-reports"></div>' + 
         '</div>' + // engagement
@@ -269,11 +272,11 @@
         var $engageStatDiv = slotDiv.find('.engage-metrics');
         slotDiv.find('.story-title').text(results[0].current_story);
 
-        $('<div class="story-stat">Time in Slot: ' + results[0].time_in_slot + '</div>' + 
-        '<div class="story-stat">Time since Publish: ' + timeResults[0] + '</div>').appendTo($storyDiv);
-        $('<div class="engage-metric">' + results[0].stats['Story View'] + ' views</div>' + 
-        '<div class="engage-metric">' + results[0].stats['Video Started'] + ' video starts</div>' + 
-        '<div class="engage-metric">' + results[0].stats['Social Share'] + ' shares</div>').appendTo($engageStatDiv);
+        $('<div class="story-stat">Time in Slot: <span class="dark-gray">' + results[0].time_in_slot + '</span></div>' + 
+        '<div class="story-stat">Time since Publish: <span class="dark-gray">' + timeResults[0] + '</span></div>').appendTo($storyDiv);
+        $('<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Story View'] + '</span> views</div>' + 
+        '<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Video Started'] + '</span> video starts</div>' + 
+        '<div class="engage-metric"><span class="dark-gray">' + results[0].stats['Social Share'] + '</span> shares</div>').appendTo($engageStatDiv);
       }
       
       function getEngagementScore(slot) {
@@ -319,13 +322,13 @@
       
       function displayEngagement(slot, data) {
         var slotDiv = $('#slot' + slot);
-        var $engageScoreDiv = slotDiv.find('.engage-score');
+        var $engageScoreDiv = slotDiv.find('.engage-label');
 
         // add engagement data to slot in report
         var length = data[1].length-1;
         var currentHour = Object.keys(data[0][length])[0];
         var currentEngagement = data[1][length][currentHour];
-        $engageScoreDiv.text(currentEngagement);
+        $engageScoreDiv.text('Engagement: '+ currentEngagement);
         
         var vsPredicted = numberFormatCommas(numberFormatRound(data[1][length][currentHour] - data[0][length][currentHour]/predictedDays));
 
@@ -491,7 +494,7 @@
                     return sum;
                 }
             )
-            .filter(function(item) { return currentHour-10 <= item.key && item.key <= currentHour; })
+            .filter(function(item) { return currentHour-4 <= item.key && item.key <= currentHour; })
             .map(function(item) { 
                 var object = {}
                 var hour = item.key[0] % 12 || 12;
@@ -543,7 +546,7 @@
                     return sum;
                 }
             )
-            .filter(function(item) { return currentHour-10 <= item.key[1] && item.key[1] <= currentHour; })
+            .filter(function(item) { return currentHour-4 <= item.key[1] && item.key[1] <= currentHour; })
             .map(function(item) { 
                 var object = {};
                 var type = item.key[0] ? 'Slot ' + params.slot : 'All Others';
@@ -647,7 +650,7 @@
                 ],
                 mixpanel.reducer.count()
             )
-            .filter(function(item) { return currentHour-10 <= item.key[0] && item.key[0] <= currentHour; })
+            .filter(function(item) { return currentHour-4 <= item.key[0] && item.key[0] <= currentHour; })
             .map(function(item) { 
                 var object = {};
                 var type = item.key[1];

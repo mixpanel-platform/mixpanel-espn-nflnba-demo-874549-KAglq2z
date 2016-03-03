@@ -327,7 +327,7 @@
         var currentEngagement = data[1][length][currentHour];
         $engageScoreDiv.text(currentEngagement);
         
-        var vsPredicted = numberFormat(data[1][length][currentHour] - data[0][length][currentHour]/predictedDays);
+        var vsPredicted = numberFormatCommas(numberFormatRound(data[1][length][currentHour] - data[0][length][currentHour]/predictedDays));
 
         // format graph data
         var graphObject = {
@@ -336,7 +336,7 @@
         }
         _.each(data[0], function(object) {
           var time = Object.keys(object)[0];
-          graphObject.Predicted[time] = numberFormat(object[time]/predictedDays);
+          graphObject.Predicted[time] = numberFormatRound(object[time]/predictedDays);
         });
         _.each(data[1], function(object) {
           var time = Object.keys(object)[0];
@@ -353,7 +353,7 @@
           $.extend(true, vsallGraphObject, object);
         });
         
-        var vsallData = numberFormat(vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour]);
+        var vsallData = numberFormatCommas(numberFormatRound(vsallGraphObject['Slot ' + slot][currentHour] - vsallGraphObject['All Others'][currentHour]));
 
         // add engagement vs all other slots graph
         addEngageChart('line', slot, 'vsall-graph', vsallData, 'VS. OTHER SLOTS', vsallGraphObject);
@@ -387,8 +387,10 @@
         return n > 0 ? '#22ca76' : n < 0 ? '#ca2222' : 'black';
       }
       
-      function numberFormat(n) {
-        n = Math.round(n);
+      function numberFormatRound(n) {
+        return Math.round(n);
+      }
+      function numberFormatCommas(n) {
         var parts = n.toString().split(".");
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         return parts.join(".");
